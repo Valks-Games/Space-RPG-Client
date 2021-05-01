@@ -15,10 +15,10 @@ MonoBehaviour:
   renderRadius: 300
   renderEverything: 1
   terrainMaterial: {fileID: 2100000, guid: 638b547811a3fed489d7c8060aacb2a1, type: 2}
-  chunks: 3
-  chunkTriangles: 1
+  chunks: 0
+  chunkTriangles: 0
   radius: 1000
-  ocean: 1
+  ocean: 0
   oceanMaterial: {fileID: 2100000, guid: 91fd2d24e39448245a46036b16897629, type: 2}
   oceanDepth: 0.031
   oceanChunks: 1

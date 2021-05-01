@@ -1,18 +1,41 @@
-using System.Collections;
+using SpaceGame.Utils;
 using System.Collections.Generic;
 using UnityEngine;
-using SpaceGame.Utils;
 
 public class EdgeRenderer : MonoBehaviour
 {
     public EdgeChunk[] chunks;
     public ChunkData[] chunkData;
 
-    private Vector3[] vertices = new Icosahedron().GetVertices();
-
     public Material mat;
     public int chunkSubdivisions;
-    
+
+    private readonly Vector3[] vertices = new Icosahedron().GetVertices();
+
+    private readonly int[,] baseFormNeighbors = new int[20, 3]
+    {
+        { 1,  4, 6   },
+        { 0,  2, 5   },
+        { 1,  3, 9   },
+        { 2,  4, 8   },
+        { 0,  3, 7   },
+        { 1,  15, 19 },
+        { 0,  15, 16 },
+        { 4,  16, 17 },
+        { 3,  17, 18 },
+        { 2,  18, 19 },
+        { 11, 14, 15 },
+        { 10, 12, 16 },
+        { 11, 13, 17 },
+        { 12, 14, 18 },
+        { 10, 13, 19 },
+        { 5,  6,  10 },
+        { 6,  7,  11 },
+        { 7,  8,  12 },
+        { 8,  9,  13 },
+        { 5,  9,  14 }
+    };
+
     private int chunksIndex;
     private int chunkDataIndex;
     private int chunkNameIndex;
@@ -46,25 +69,88 @@ public class EdgeRenderer : MonoBehaviour
         InitializeChunks(new List<Vector3> { vertices[9], vertices[8], vertices[1] }, chunkSubdivisions);
 
         var abc = true; // temp test value
-        for (int i = 0; i < chunkData.Length; i++) 
+        for (int i = 0; i < chunkData.Length; i++)
         {
             if (abc)
-                GenerateChunk(chunkData[i], 1);
+                GenerateChunk(chunkData[i], 0);
             else
-                GenerateChunk(chunkData[i], 3);
+                GenerateChunk(chunkData[i], 0);
 
             abc = !abc;
         }
 
         StitchEdges();
 
-        for (int i = 0; i < chunks.Length; i++) 
+        for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].GenerateMesh();
         }
+
+        // For 3 subdivisions there are 64 vertices per base face
+
+        // CENTER NEIGHBORS
+        /*for (int i = 2; i < chunkData.Length; i+=4)
+        {
+            chunkData[i - 2].chunk.SetColor(Color.red);
+            chunkData[i - 1].chunk.SetColor(Color.red);
+            chunkData[i].chunk.SetColor(Color.green);
+            chunkData[i + 1].chunk.SetColor(Color.red);
+        }*/
+
+        /*for (int i = 0; i < 3; i++)
+        {
+            Debug.Log(baseFormNeighbors[0, i]);
+        }*/
+
+        // EDGE NEIGHBORS
+        var trianglesPerBaseFace = (int)Mathf.Pow(4, chunkSubdivisions);
+
+        // TEST
+        var offset = 0;
+        for (int i = 0; i < Mathf.Pow(2, chunkSubdivisions); i++) 
+        {
+            if (i != 0 && i % 2 == 0) offset = (trianglesPerBaseFace / (int)Mathf.Pow(4, chunkSubdivisions - 1)) - i;
+            chunkData[i + offset].chunk.SetColor(Color.green);
+            chunkData[i + offset + trianglesPerBaseFace + i * 2].chunk.SetColor(Color.red);
+        }
+        // TEST
+
+        /*chunkData[0].chunk.SetColor(Color.green);
+        chunkData[trianglesPerBaseFace].chunk.SetColor(Color.red);
+
+        chunkData[1].chunk.SetColor(Color.green);
+        chunkData[1 + trianglesPerBaseFace + 2].chunk.SetColor(Color.red);
+
+        // go to next small chunk cluster +3 (skip over the 2 remaining chunks in the small chunk cluster + 1 to get into the next small cluster)
+
+        var smallOffset = trianglesPerBaseFace / (int)Mathf.Pow(4, chunkSubdivisions - 1);
+
+        chunkData[smallOffset].chunk.SetColor(Color.green);
+        chunkData[smallOffset + trianglesPerBaseFace + 8].chunk.SetColor(Color.red);
+
+        chunkData[smallOffset + 1].chunk.SetColor(Color.green);
+        chunkData[smallOffset + 1 + trianglesPerBaseFace + 10].chunk.SetColor(Color.red);
+
+        // go to next big chunk cluster +11 (because 15 - 4 = 11) (there are 16 chunks in a big chunk cluster)
+
+        var bigOffset = trianglesPerBaseFace / (int)Mathf.Pow(4, chunkSubdivisions - 2);
+
+        chunkData[bigOffset].chunk.SetColor(Color.green);
+        chunkData[bigOffset + trianglesPerBaseFace + 32].chunk.SetColor(Color.red);
+
+        chunkData[bigOffset + 1].chunk.SetColor(Color.green);
+        chunkData[bigOffset + 1 + trianglesPerBaseFace + 34].chunk.SetColor(Color.red);
+
+        // go to next small chunk cluster +3
+
+        chunkData[bigOffset + smallOffset].chunk.SetColor(Color.green);
+        chunkData[bigOffset + smallOffset + trianglesPerBaseFace + 40].chunk.SetColor(Color.red);
+
+        chunkData[bigOffset + smallOffset + 1].chunk.SetColor(Color.green);
+        chunkData[bigOffset + smallOffset + 1 + trianglesPerBaseFace + 42].chunk.SetColor(Color.red);*/
     }
 
-    private void StitchEdges() 
+    private void StitchEdges()
     {
         for (int i = 0; i < chunks.Length; i++)
         {
@@ -101,7 +187,7 @@ public class EdgeRenderer : MonoBehaviour
                         var RR_L = chunkVertices[redEdgeIndices[0]] == chunkVerticesOther[redEdgeIndicesOther[redEdgeIndicesOther.Length - 1]];
                         var RR_R = chunkVertices[redEdgeIndices[redEdgeIndices.Length - 1]] == chunkVerticesOther[redEdgeIndicesOther[0]];
 
-                        if (RR_L && RR_R) 
+                        if (RR_L && RR_R)
                         {
                             StitchChunkEdges(EdgeColor.Red, EdgeColor.Red, i, k);
                         }
@@ -178,7 +264,7 @@ public class EdgeRenderer : MonoBehaviour
                             StitchChunkEdges(EdgeColor.Green, EdgeColor.Blue, i, k);
                         }
                     }
-                    else 
+                    else
                     {
                         // RR GG BB (For some reason when the edge colors are the same the stitching needs to be done in reverse)
                         if (midpointRed == midpointRedOther)
@@ -216,7 +302,7 @@ public class EdgeRenderer : MonoBehaviour
         }
     }
 
-    private void StitchChunkEdges(EdgeColor edgeCurrent, EdgeColor edgeNeighbor, int curIndex, int neighhorIndex) 
+    private void StitchChunkEdges(EdgeColor edgeCurrent, EdgeColor edgeNeighbor, int curIndex, int neighhorIndex)
     {
         var curChunk = chunks[curIndex];
         var neighborChunk = chunks[neighhorIndex];
@@ -224,7 +310,7 @@ public class EdgeRenderer : MonoBehaviour
         var neighborEdgeVertices = neighborChunk.edges[(int)edgeNeighbor].vertices;
         var neighborIndex = 0;
 
-        for (int k = 0; k < curChunk.edges[(int)edgeCurrent].vertices.Length - 1; k++) 
+        for (int k = 0; k < curChunk.edges[(int)edgeCurrent].vertices.Length - 1; k++)
         {
             var A = curChunk.vertices[curChunk.edges[(int)edgeCurrent].vertices[k]];
             var B = curChunk.vertices[curChunk.edges[(int)edgeCurrent].vertices[k + 1]];
@@ -243,7 +329,7 @@ public class EdgeRenderer : MonoBehaviour
                     if (neighborChunk.vertices[neighborEdgeVertices[neighborIndex]] != Vector3.Lerp(A, B, t))
                         neighborChunk.vertices[neighborEdgeVertices[neighborIndex]] = Vector3.Lerp(A, B, t);
                 }
-                else 
+                else
                 {
                     //new DebugPoint(neighborChunk.vertices[neighborEdgeVertices[neighborEdgeVertices.Length - 1 - neighborIndex]], "Purple").SetSize(0.4f).SetColor(Color.magenta);
                     //new DebugPoint(Vector3.Lerp(A, B, t), "Green").SetSize(0.4f).SetColor(Color.green);
@@ -297,7 +383,7 @@ public class EdgeRenderer : MonoBehaviour
     private void GenerateChunk(ChunkData _chunkData, int _chunkTriangles)
     {
         var chunkObj = new GameObject();
-        chunkObj.name = $"{++chunkNameIndex}";
+        chunkObj.name = $"{chunkNameIndex++}";
         var chunk = chunkObj.AddComponent<EdgeChunk>();
 
         chunk.Create(_chunkData.vertices, mat, _chunkTriangles);
@@ -320,4 +406,3 @@ public class EdgeRenderer : MonoBehaviour
         Blue
     }
 }
-

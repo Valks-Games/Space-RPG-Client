@@ -377,8 +377,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunks: []
-  mat: {fileID: 2100000, guid: e59304bd3cc49c74da45750bb3252085, type: 2}
-  chunkSubdivisions: 0
+  mat: {fileID: 2100000, guid: 82bd9a0e6f5ae3142980a9df3768442f, type: 2}
+  chunkSubdivisions: 2
 --- !u!114 &1679665077
 MonoBehaviour:
   m_ObjectHideFlags: 0

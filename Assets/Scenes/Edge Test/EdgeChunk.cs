@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using SpaceGame.Utils;
+using UnityEngine;
 
 // reminder to add namespace when converting over
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
@@ -27,7 +25,7 @@ public class EdgeChunk : MonoBehaviour
     private int rowIndex;
     private int triIndex;
 
-    public void Create(Vector3[] _vertices, Material _mat, int _subdivisions) 
+    public void Create(Vector3[] _vertices, Material _mat, int _subdivisions)
     {
         mat = _mat;
         subdivisions = Mathf.Max(0, _subdivisions);
@@ -57,19 +55,19 @@ public class EdgeChunk : MonoBehaviour
 
         var noise = new Noise();
 
-        for (int i = 0; i < vertices.Count; i++) 
+        for (int i = 0; i < vertices.Count; i++)
         {
             vertices[i] = vertices[i].normalized;
-            vertices[i] = vertices[i] * Mathf.Max(0.5f, noise.Evaluate(vertices[i]));
+            //vertices[i] = vertices[i] * Mathf.Max(0.5f, noise.Evaluate(vertices[i]));
         }
 
         // Debug
-        Debug.DrawLine(vertices[0], vertices[1], Color.red, 10000);
-        Debug.DrawLine(vertices[1], vertices[2], Color.green, 10000);
-        Debug.DrawLine(vertices[2], vertices[0], Color.blue, 10000);
+        //Debug.DrawLine(vertices[0], vertices[1], Color.red, 10000);
+        //Debug.DrawLine(vertices[1], vertices[2], Color.green, 10000);
+        //Debug.DrawLine(vertices[2], vertices[0], Color.blue, 10000);
     }
 
-    public void GenerateMesh() 
+    public void GenerateMesh()
     {
         mesh = new Mesh();
         mesh.vertices = vertices.ToArray(); ;
@@ -79,14 +77,14 @@ public class EdgeChunk : MonoBehaviour
         GetComponent<MeshRenderer>().material = mat;
     }
 
-    private void Triangulate() 
+    private void Triangulate()
     {
         redEdge = edges[0];
         greenEdge = edges[1];
         blueEdge = edges[2];
         lastEdgeVertex = edges[0].vertices.Length - 1; // All edges have the same vertex count
 
-        if (subdivisions == 0) 
+        if (subdivisions == 0)
         {
             Triangle(0, 1, 2);
             return;
@@ -101,7 +99,7 @@ public class EdgeChunk : MonoBehaviour
         // First Triangle from Bottom Right
         Triangle(greenEdge.vertices[lastEdgeVertex - 1], redEdge.vertices[lastEdgeVertex - 1], redEdge.vertices[lastEdgeVertex]);
 
-        if (subdivisions == 1) 
+        if (subdivisions == 1)
             Triangle(greenEdge.vertices[1], blueEdge.vertices[1], redEdge.vertices[1]);
 
         if (subdivisions < 2)
@@ -125,7 +123,7 @@ public class EdgeChunk : MonoBehaviour
         InnerRowTriangles();
     }
 
-    private void LeftRowTriangles() 
+    private void LeftRowTriangles()
     {
         for (int i = 0; i < blueEdge.vertices.Length - 3; i++)
             Triangle(blueEdge.vertices[2 + i], blueEdge.vertices[1 + i], rows[i].vertices[0]); // 1st tri top to bottom
@@ -153,7 +151,7 @@ public class EdgeChunk : MonoBehaviour
             Triangle(greenEdge.vertices[i + 2], rows[rows.Length - 1].vertices[i], rows[rows.Length - 1].vertices[i + 1]);
     }
 
-    private void InnerRowTriangles() 
+    private void InnerRowTriangles()
     {
         // Second Row and beyond
         for (int r = 1; r < rows.Length - 1; r++)
@@ -170,7 +168,8 @@ public class EdgeChunk : MonoBehaviour
      * Creates a edge with a start vertex, end vertex and the inner vertices also
      * known as the number of inner edge divisions.
      */
-    private void CreateEdge(int start, int end) 
+
+    private void CreateEdge(int start, int end)
     {
         var divisions = Mathf.Max(0, (int)Mathf.Pow(2, subdivisions) - 1);
         var innerEdgeIndices = new int[divisions];
@@ -199,7 +198,8 @@ public class EdgeChunk : MonoBehaviour
     /*!
      * Creates the vertices inside the triangle that do not touch any outside edge.
      */
-    private void CreateInnerPoints() 
+
+    private void CreateInnerPoints()
     {
         if (subdivisions > 1)
         {
@@ -227,11 +227,16 @@ public class EdgeChunk : MonoBehaviour
         }
     }
 
-    private void Triangle(int a, int b, int c) 
+    private void Triangle(int a, int b, int c)
     {
         triangles[triIndex++] = a;
         triangles[triIndex++] = b;
         triangles[triIndex++] = c;
+    }
+
+    public void SetColor(Color color)
+    {
+        GetComponent<MeshRenderer>().material.SetColor("_Color", color);
     }
 
     private void OnDrawGizmos()
@@ -256,6 +261,7 @@ public class EdgeChunk : MonoBehaviour
 /*!
  * A Edge counts both the start and end vertex as well as all the vertices in between.
  */
+
 public class Edge
 {
     public int[] vertices; // Referenced by index in EdgeChunk.vertices
@@ -269,11 +275,12 @@ public class Edge
 /*!
  * A Row does not count the outer vertices touching the outer edges.
  */
-public class Row 
+
+public class Row
 {
     public List<int> vertices = new List<int>(); // Referenced by index in EdgeChunk.vertices
 
-    public void AddTriangle(int _vertex) 
+    public void AddTriangle(int _vertex)
     {
         vertices.Add(_vertex);
     }
