@@ -88,66 +88,29 @@ public class EdgeRenderer : MonoBehaviour
 
         // For 3 subdivisions there are 64 vertices per base face
 
-        // CENTER NEIGHBORS
-        /*for (int i = 2; i < chunkData.Length; i+=4)
-        {
-            chunkData[i - 2].chunk.SetColor(Color.red);
-            chunkData[i - 1].chunk.SetColor(Color.red);
-            chunkData[i].chunk.SetColor(Color.green);
-            chunkData[i + 1].chunk.SetColor(Color.red);
-        }*/
-
-        /*for (int i = 0; i < 3; i++)
-        {
-            Debug.Log(baseFormNeighbors[0, i]);
-        }*/
-
         // EDGE NEIGHBORS
-        var trianglesPerBaseFace = (int)Mathf.Pow(4, chunkSubdivisions);
+        //var trianglesPerBaseFace = (int)Mathf.Pow(4, chunkSubdivisions);
 
-        // TEST
+        // First Edge
         var offset = 0;
-        for (int i = 0; i < Mathf.Pow(2, chunkSubdivisions); i++) 
+        var currentPower = chunkSubdivisions - 1;
+        for (int i = 0; i < Mathf.Pow(4, chunkSubdivisions); i+=4) 
         {
-            if (i != 0 && i % 2 == 0) offset = (trianglesPerBaseFace / (int)Mathf.Pow(4, chunkSubdivisions - 1)) - i;
-            chunkData[i + offset].chunk.SetColor(Color.green);
-            chunkData[i + offset + trianglesPerBaseFace + i * 2].chunk.SetColor(Color.red);
+            if (i == (int)Mathf.Pow(4, currentPower)) 
+            {
+                offset = (int)Mathf.Pow(4, currentPower);
+                currentPower++;
+            }
+
+            if (i < offset + 8 || (i >= offset + 16 && i < offset + 24)) // 3 chunkSubdivisions
+            {
+                chunkData[i].chunk.SetColor(Color.green);
+                chunkData[i + 1].chunk.SetColor(Color.green);
+
+                //chunkData[i + 256 + 64].chunk.SetColor(Color.red);
+                //chunkData[i + 256 + 64 + 1].chunk.SetColor(Color.red);
+            }
         }
-        // TEST
-
-        /*chunkData[0].chunk.SetColor(Color.green);
-        chunkData[trianglesPerBaseFace].chunk.SetColor(Color.red);
-
-        chunkData[1].chunk.SetColor(Color.green);
-        chunkData[1 + trianglesPerBaseFace + 2].chunk.SetColor(Color.red);
-
-        // go to next small chunk cluster +3 (skip over the 2 remaining chunks in the small chunk cluster + 1 to get into the next small cluster)
-
-        var smallOffset = trianglesPerBaseFace / (int)Mathf.Pow(4, chunkSubdivisions - 1);
-
-        chunkData[smallOffset].chunk.SetColor(Color.green);
-        chunkData[smallOffset + trianglesPerBaseFace + 8].chunk.SetColor(Color.red);
-
-        chunkData[smallOffset + 1].chunk.SetColor(Color.green);
-        chunkData[smallOffset + 1 + trianglesPerBaseFace + 10].chunk.SetColor(Color.red);
-
-        // go to next big chunk cluster +11 (because 15 - 4 = 11) (there are 16 chunks in a big chunk cluster)
-
-        var bigOffset = trianglesPerBaseFace / (int)Mathf.Pow(4, chunkSubdivisions - 2);
-
-        chunkData[bigOffset].chunk.SetColor(Color.green);
-        chunkData[bigOffset + trianglesPerBaseFace + 32].chunk.SetColor(Color.red);
-
-        chunkData[bigOffset + 1].chunk.SetColor(Color.green);
-        chunkData[bigOffset + 1 + trianglesPerBaseFace + 34].chunk.SetColor(Color.red);
-
-        // go to next small chunk cluster +3
-
-        chunkData[bigOffset + smallOffset].chunk.SetColor(Color.green);
-        chunkData[bigOffset + smallOffset + trianglesPerBaseFace + 40].chunk.SetColor(Color.red);
-
-        chunkData[bigOffset + smallOffset + 1].chunk.SetColor(Color.green);
-        chunkData[bigOffset + smallOffset + 1 + trianglesPerBaseFace + 42].chunk.SetColor(Color.red);*/
     }
 
     private void StitchEdges()

@@ -8,6 +8,7 @@ public class EdgeChunk : MonoBehaviour
 {
     public List<Vector3> vertices = new List<Vector3>();
     private int[] triangles;
+    private Vector2[] uvs;
     public Edge[] edges;
     private Row[] rows;
 
@@ -50,6 +51,8 @@ public class EdgeChunk : MonoBehaviour
         // Create Inner Points
         CreateInnerPoints();
 
+        CalculateUVs();
+
         // Triangles
         Triangulate();
 
@@ -58,7 +61,7 @@ public class EdgeChunk : MonoBehaviour
         for (int i = 0; i < vertices.Count; i++)
         {
             vertices[i] = vertices[i].normalized;
-            //vertices[i] = vertices[i] * Mathf.Max(0.5f, noise.Evaluate(vertices[i]));
+            vertices[i] = vertices[i] * Mathf.Max(0.5f, noise.Evaluate(vertices[i]));
         }
 
         // Debug
@@ -72,9 +75,21 @@ public class EdgeChunk : MonoBehaviour
         mesh = new Mesh();
         mesh.vertices = vertices.ToArray(); ;
         mesh.triangles = triangles.ToArray();
+        mesh.uv = uvs;
         mesh.normals = mesh.vertices.Select(s => s.normalized).ToArray();
         GetComponent<MeshFilter>().sharedMesh = mesh;
         GetComponent<MeshRenderer>().material = mat;
+    }
+
+    private void CalculateUVs() 
+    {
+        uvs = new Vector2[vertices.Count];
+
+        for (int i = 0; i < vertices.Count; i++) 
+        {
+            uvs[i].x = (Mathf.Atan2(vertices[i].z, vertices[i].x) / (2f * Mathf.PI));
+            uvs[i].y = (Mathf.Asin(vertices[i].y) / Mathf.PI) + 0.5f;
+        }
     }
 
     private void Triangulate()
@@ -255,6 +270,114 @@ public class EdgeChunk : MonoBehaviour
         {
             Gizmos.DrawSphere(vertices[i], 0.01f);
         }*/
+    }
+
+    private static Dictionary<int, int> FindAndFixeWarpedFaces(ref int[] triangles, ref List<Vector3> vertices)
+    {
+        List<int> warpedFaces = new List<int>();
+        Dictionary<int, int> checkedVert = new Dictionary<int, int>();
+
+        // find warped faces
+        for (int i = 0; i < triangles.Length; i+=3)
+        {
+            Vector3 coordA = GetUvCoordinates(vertices[i]);
+            Vector3 coordB = GetUvCoordinates(vertices[i + 1]);
+            Vector3 coordC = GetUvCoordinates(vertices[i + 2]);
+
+            Vector3 texNormal = Vector3.Cross(coordB - coordA, coordC - coordA);
+            if (texNormal.z > 0)
+            {
+                warpedFaces.AddRange(new List<int>() { i, i + 1, i + 2 });
+            }
+        }
+
+        // fix warped faces
+        for (int i = 0; i < warpedFaces.Count; i+=3)
+        {
+            float xCoordA = GetUvCoordinates(vertices[warpedFaces[i]]).x;
+            float xCoordB = GetUvCoordinates(vertices[warpedFaces[i + 1]]).x;
+            float xCoordC = GetUvCoordinates(vertices[warpedFaces[i + 2]]).x;
+
+            if (xCoordA < 0.25f)
+            {
+                int newIa = i;
+                if (!checkedVert.TryGetValue(i, out newIa))
+                {
+                    vertices.Add(vertices[i]);
+                    checkedVert[i] = vertices.Count - 1;
+                    newIa = vertices.Count - 1;
+                }
+                warpedFaces[i] = newIa;
+            }
+            if (xCoordB < 0.25f)
+            {
+                int newIb = i + 1;
+                if (!checkedVert.TryGetValue(i + 1, out newIb))
+                {
+                    vertices.Add(vertices[i + 1]);
+                    checkedVert[i + 1] = vertices.Count - 1;
+                    newIb = vertices.Count - 1;
+                }
+                warpedFaces[i + 1] = newIb;
+            }
+            if (xCoordC < 0.25f)
+            {
+                int newIc = i + 2;
+                if (!checkedVert.TryGetValue(i + 2, out newIc))
+                {
+                    vertices.Add(vertices[i + 2]);
+                    checkedVert[i + 2] = vertices.Count - 1;
+                    newIc = vertices.Count - 1;
+                }
+                warpedFaces[i + 2] = newIc;
+            }
+        }
+
+        return checkedVert;
+    }
+
+    //fix pole vertices incorrect U
+    private static Dictionary<int, float> FindAndFixPoleVertices(ref List<int> triangles, ref List<Vector3> vertices)
+    {
+        float phi = (1f + Mathf.Sqrt(5f)) / 2f;
+
+        Vector3 north = new Vector3(0f, phi, 0f);
+        Vector3 south = -north;
+
+        List<int> poleVerticeInd = new List<int>();
+        Dictionary<int, float> poleVertIndicesCorrectU = new Dictionary<int, float>();
+
+        for (int i = 0; i < triangles.Count; i++)
+        {
+            if (vertices[triangles[i]] == north || vertices[triangles[i]] == south)
+            {
+                if (!poleVerticeInd.Contains(triangles[i]))
+                {
+                    poleVerticeInd.Add(triangles[i]);
+                }
+                else
+                {
+                    vertices.Add(vertices[triangles[i]] == north ? north : south);
+                    triangles[i] = vertices.Count - 1;
+                }
+                float xCoordB = GetUvCoordinates(vertices[triangles[i + 1]]).x;
+                float xCoordC = GetUvCoordinates(vertices[triangles[i + 2]]).x;
+                float correctedU = (xCoordB + xCoordC) / 2f + 0.5f; // I am not sure why it is needed but it seems needed...
+
+                poleVertIndicesCorrectU[triangles[i]] = correctedU;
+            }
+        }
+
+        return poleVertIndicesCorrectU;
+    }
+
+    private static Vector2 GetUvCoordinates(Vector3 vertice)
+    {
+        Vector3 vertCoord = vertice.normalized;
+        float u = (Mathf.Atan2(vertCoord.z, vertCoord.x) / (2f * Mathf.PI));
+        float v = (Mathf.Asin(vertCoord.y) / Mathf.PI) + 0.5f;
+
+        return new Vector2(u, v);
     }
 }
 
