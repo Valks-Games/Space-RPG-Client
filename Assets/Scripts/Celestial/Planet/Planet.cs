@@ -46,11 +46,6 @@ namespace SpaceGame.Celestial
         private void Update()
         {
             // Only render chunks in range
-            if (terrain != null)
-                terrain.RenderNearbyChunks(shapeSettings.renderRadius);
-            if (ocean != null)
-                if (shapeSettings.ocean)
-                    ocean.RenderNearbyChunks(shapeSettings.renderRadius);
         }
 
         public void GeneratePlanet()
