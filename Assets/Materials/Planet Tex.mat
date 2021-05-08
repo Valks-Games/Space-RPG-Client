@@ -32,6 +32,38 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Tex:
+        m_Texture: {fileID: 2800000, guid: ed14aaf99dd95a047897fdbd3488bba1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Tex_1:
+        m_Texture: {fileID: 2800000, guid: ab0e994c33c011e4c9fad5efe3c0f583, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Tex_2:
+        m_Texture: {fileID: 2800000, guid: ab0e994c33c011e4c9fad5efe3c0f583, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Tex_3:
+        m_Texture: {fileID: 2800000, guid: ab0e994c33c011e4c9fad5efe3c0f583, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture:
+        m_Texture: {fileID: 2800000, guid: ed14aaf99dd95a047897fdbd3488bba1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_Array:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture_1:
+        m_Texture: {fileID: 2800000, guid: ed14aaf99dd95a047897fdbd3488bba1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture_2:
+        m_Texture: {fileID: 2800000, guid: a0ee07a2bddeedf4e88b87bd3a0a79e0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -84,6 +116,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Triplanar_e70c81a421c94160a65e0b2df7320543_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 597be551910fa4448ba882e592a5b1fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -98,8 +134,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Blend_Sharpness: 10
+    - Height: -43.6
+    - Tile_Scale: 0.05
     - _AlphaClip: 0
-    - _Blend: 0
+    - _Blend: 10
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -109,6 +148,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
+    - _Float: 14.9
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
