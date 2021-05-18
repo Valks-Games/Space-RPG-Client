@@ -39,7 +39,7 @@ namespace SpaceGame.Utils
 
         public DebugPoint SetColor(Color color) 
         {
-            go.GetComponent<Renderer>().material.color = color;
+            go.GetComponent<Renderer>().sharedMaterial.color = color;
             return this;
         }
 

@@ -19,14 +19,14 @@ namespace SpaceGame.Celestial
             float amplitude = 1;
             float weight = 1;
 
-            for (int i = 0; i < settings.numLayers; i++)
+            for (int i = 0; i < settings.octaves; i++)
             {
                 float v = 1 - Mathf.Abs(noise.Evaluate(point * frequency + settings.centre));
                 v *= v;
                 v *= weight;
                 weight = Mathf.Clamp01(v * settings.weightMultiplier);
 
-                frequency *= settings.frequency;
+                frequency *= 2;
                 amplitude *= settings.amplitude;
 
                 noiseValue += v * amplitude;

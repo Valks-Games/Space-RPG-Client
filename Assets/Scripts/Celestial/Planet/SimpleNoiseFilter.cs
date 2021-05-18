@@ -15,12 +15,12 @@ namespace SpaceGame.Celestial
         public float Evaluate(Vector3 point)
         {
             float noiseValue = 0;
-            float frequency = settings.baseRoughness;
+            float frequency = settings.frequency;
             float amplitude = 1;
 
-            for (int i = 0; i < settings.numLayers; i++)
+            for (int i = 0; i < settings.octaves; i++)
             {
-                frequency *= settings.frequency;
+                frequency *= 2;
                 amplitude *= settings.amplitude;
 
                 float v = noise.Evaluate(point * frequency + settings.centre);
@@ -28,7 +28,7 @@ namespace SpaceGame.Celestial
 
             }
 
-            noiseValue = noiseValue - settings.minValue;
+            noiseValue = noiseValue + settings.minValue;
             return noiseValue * settings.strength;
         }
     }

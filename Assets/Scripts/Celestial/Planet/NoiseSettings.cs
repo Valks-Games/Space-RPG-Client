@@ -18,24 +18,11 @@ namespace SpaceGame.Celestial
         [System.Serializable]
         public class SimpleNoiseSettings
         {
-            [Range(0, 1)]
             public float strength = 1;
-
-            [Range(1, 8)]
-            public int numLayers = 1;
-
-            [Range(0, 2)]
-            public float baseRoughness = 1;
-
-            [Range(0, 10)]
+            public int octaves = 1;
             public float frequency = 2;
-
-            [Range(0, 3)]
             public float amplitude = .5f;
-
-            [Range(0, 1)]
             public float minValue;
-
             public Vector3 centre;
         }
 

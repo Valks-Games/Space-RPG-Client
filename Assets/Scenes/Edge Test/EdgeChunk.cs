@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using SpaceGame.Celestial;
+using SpaceGame.Utils;
 
 // reminder to add namespace when converting over
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class EdgeChunk : MonoBehaviour
 {
-    public List<Vector3> vertices = new List<Vector3>();
+    public Vector3[] vertices;
     private int[] triangles;
-    private Vector2[] uvs;
     public Edge[] edges;
     private Row[] rows;
 
@@ -25,22 +26,32 @@ public class EdgeChunk : MonoBehaviour
     private int edgeIndex;
     private int rowIndex;
     private int triIndex;
+    private int vertexIndex;
 
-    public void Create(Vector3[] _vertices, Material _mat, int _subdivisions)
+    private EdgeRenderer edgeRenderer;
+
+    public void Create(Vector3[] _vertices, EdgeRenderer _edgeRenderer, int _subdivisions)
     {
-        mat = _mat;
+        edgeRenderer = _edgeRenderer;
+        mat = edgeRenderer.mat;
         subdivisions = Mathf.Max(0, _subdivisions);
+
+        var vertexCount = 1 + (2 + (int)Mathf.Pow(2, subdivisions) + 1) * ((int)Mathf.Pow(2, subdivisions)) / 2;
 
         int triIndexCount = (int)Mathf.Pow(4, subdivisions) * 3;
         if (subdivisions == 0)
             triIndexCount = 3;
 
         triangles = new int[triIndexCount];
+        
 
         // TODO: Make "List<Vector3>" vertices become "Vector3[] vertices"
-        //var vertexCount = 1 + (2 + (int)Mathf.Pow(2, subdivisions) + 1) * ((int)Mathf.Pow(2, subdivisions)) / 2;
+        
+        vertices = new Vector3[vertexCount];
 
-        vertices.AddRange(new List<Vector3> { _vertices[0], _vertices[1], _vertices[2] });
+        vertices[vertexIndex++] = _vertices[0];
+        vertices[vertexIndex++] = _vertices[1];
+        vertices[vertexIndex++] = _vertices[2];
 
         // Create Edges
         edges = new Edge[3];
@@ -51,45 +62,71 @@ public class EdgeChunk : MonoBehaviour
         // Create Inner Points
         CreateInnerPoints();
 
-        CalculateUVs();
+
+        //CalculateUVs();
 
         // Triangles
         Triangulate();
 
-        var noise = new Noise();
+        var noise = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.noiseSettings);
 
-        for (int i = 0; i < vertices.Count; i++)
+        for (int i = 0; i < vertices.Length; i++)
         {
             vertices[i] = vertices[i].normalized;
-            vertices[i] = vertices[i] * Mathf.Max(0.5f, noise.Evaluate(vertices[i])) * 100f;
+            vertices[i] = vertices[i] * Mathf.Max(0.5f, noise.Evaluate(vertices[i])) * edgeRenderer.radius;
         }
 
         // Debug
         //Debug.DrawLine(vertices[0], vertices[1], Color.red, 10000);
         //Debug.DrawLine(vertices[1], vertices[2], Color.green, 10000);
         //Debug.DrawLine(vertices[2], vertices[0], Color.blue, 10000);
+
+        transform.SetParent(GameObject.Find("Renderer").transform);
+        //gameObject.isStatic = true;
     }
 
     public void GenerateMesh()
     {
         mesh = new Mesh();
-        mesh.vertices = vertices.ToArray(); ;
+        mesh.name = "Chunk";
+        mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
-        //mesh.uv = uvs;
+        UpdateUVs();
         mesh.normals = mesh.vertices.Select(s => s.normalized).ToArray();
         GetComponent<MeshFilter>().sharedMesh = mesh;
         GetComponent<MeshRenderer>().material = mat;
+
+        //var collider = gameObject.AddComponent<MeshCollider>();
+        //collider.sharedMesh = mesh;
     }
 
-    private void CalculateUVs()
+    public void UpdateUVs() 
     {
-        uvs = new Vector2[vertices.Count];
+        Vector4[] uvs = new Vector4[vertices.Length];
 
-        for (int i = 0; i < vertices.Count; i++)
+        var noise1 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biomeSettings1);
+        var noise2 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biomeSettings2);
+        var noise3 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biomeSettings3);
+
+        for (int i = 0; i < vertices.Length; i++) 
         {
-            uvs[i].x = (Mathf.Atan2(vertices[i].z, vertices[i].x) / (2f * Mathf.PI));
-            uvs[i].y = (Mathf.Asin(vertices[i].y) / Mathf.PI) + 0.5f;
+            if (noise1.Evaluate(vertices[i]) > 0.5f) // Terrain
+                uvs[i] = new Vector4(1, 0, 0, 0);
+
+            if (noise2.Evaluate(vertices[i]) > 0.5f) // Swamp
+                if (uvs[i] != new Vector4(0, 0, 0, 0))
+                    uvs[i] = new Vector4(0, 1, 0, 0);
+
+            if (noise3.Evaluate(vertices[i]) > 0.5f) // Mountain
+                uvs[i] = new Vector4(0, 0, 1, 0);
         }
+
+        mesh.SetUVs(0, uvs);
+    }
+
+    private float Remap(float s, float a1, float a2, float b1, float b2)
+    {
+        return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
     }
 
     private void Triangulate()
@@ -193,8 +230,8 @@ public class EdgeChunk : MonoBehaviour
         {
             float t = (i + 1f) / (divisions + 1f);
             var vertex = Vector3.Lerp(vertices[start], vertices[end], t); // Calculate inner vertices
-            vertices.Add(vertex); // Add inner edge vertices to total array of chunk vertices
-            innerEdgeIndices[i] = vertices.Count - 1; // For later reference when populating edgeIndices
+            vertices[vertexIndex++] = (vertex); // Add inner edge vertices to total array of chunk vertices
+            innerEdgeIndices[i] = vertexIndex - 1; // For later reference when populating edgeIndices
         }
 
         // Populate edge indices for later reference
@@ -234,8 +271,8 @@ public class EdgeChunk : MonoBehaviour
                     // Create inner point
                     // [sideA.vertexIndices.Length - 3 - i] We subtract 3 to skip over "end" vertex and the first row.
                     // [2 + i] to skip over "start" vertex and the first row.
-                    vertices.Add(Vector3.Lerp(vertices[sideA.vertices[2 + i]], vertices[sideB.vertices[2 + i]], t));
-                    row.AddTriangle(vertices.Count - 1);
+                    vertices[vertexIndex++] = (Vector3.Lerp(vertices[sideA.vertices[2 + i]], vertices[sideB.vertices[2 + i]], t));
+                    row.AddTriangle(vertexIndex - 1);
                 }
                 rows[rowIndex++] = row;
             }
@@ -270,114 +307,6 @@ public class EdgeChunk : MonoBehaviour
         {
             Gizmos.DrawSphere(vertices[i], 0.01f);
         }*/
-    }
-
-    private static Dictionary<int, int> FindAndFixeWarpedFaces(ref int[] triangles, ref List<Vector3> vertices)
-    {
-        List<int> warpedFaces = new List<int>();
-        Dictionary<int, int> checkedVert = new Dictionary<int, int>();
-
-        // find warped faces
-        for (int i = 0; i < triangles.Length; i += 3)
-        {
-            Vector3 coordA = GetUvCoordinates(vertices[i]);
-            Vector3 coordB = GetUvCoordinates(vertices[i + 1]);
-            Vector3 coordC = GetUvCoordinates(vertices[i + 2]);
-
-            Vector3 texNormal = Vector3.Cross(coordB - coordA, coordC - coordA);
-            if (texNormal.z > 0)
-            {
-                warpedFaces.AddRange(new List<int>() { i, i + 1, i + 2 });
-            }
-        }
-
-        // fix warped faces
-        for (int i = 0; i < warpedFaces.Count; i += 3)
-        {
-            float xCoordA = GetUvCoordinates(vertices[warpedFaces[i]]).x;
-            float xCoordB = GetUvCoordinates(vertices[warpedFaces[i + 1]]).x;
-            float xCoordC = GetUvCoordinates(vertices[warpedFaces[i + 2]]).x;
-
-            if (xCoordA < 0.25f)
-            {
-                int newIa = i;
-                if (!checkedVert.TryGetValue(i, out newIa))
-                {
-                    vertices.Add(vertices[i]);
-                    checkedVert[i] = vertices.Count - 1;
-                    newIa = vertices.Count - 1;
-                }
-                warpedFaces[i] = newIa;
-            }
-            if (xCoordB < 0.25f)
-            {
-                int newIb = i + 1;
-                if (!checkedVert.TryGetValue(i + 1, out newIb))
-                {
-                    vertices.Add(vertices[i + 1]);
-                    checkedVert[i + 1] = vertices.Count - 1;
-                    newIb = vertices.Count - 1;
-                }
-                warpedFaces[i + 1] = newIb;
-            }
-            if (xCoordC < 0.25f)
-            {
-                int newIc = i + 2;
-                if (!checkedVert.TryGetValue(i + 2, out newIc))
-                {
-                    vertices.Add(vertices[i + 2]);
-                    checkedVert[i + 2] = vertices.Count - 1;
-                    newIc = vertices.Count - 1;
-                }
-                warpedFaces[i + 2] = newIc;
-            }
-        }
-
-        return checkedVert;
-    }
-
-    //fix pole vertices incorrect U
-    private static Dictionary<int, float> FindAndFixPoleVertices(ref List<int> triangles, ref List<Vector3> vertices)
-    {
-        float phi = (1f + Mathf.Sqrt(5f)) / 2f;
-
-        Vector3 north = new Vector3(0f, phi, 0f);
-        Vector3 south = -north;
-
-        List<int> poleVerticeInd = new List<int>();
-        Dictionary<int, float> poleVertIndicesCorrectU = new Dictionary<int, float>();
-
-        for (int i = 0; i < triangles.Count; i++)
-        {
-            if (vertices[triangles[i]] == north || vertices[triangles[i]] == south)
-            {
-                if (!poleVerticeInd.Contains(triangles[i]))
-                {
-                    poleVerticeInd.Add(triangles[i]);
-                }
-                else
-                {
-                    vertices.Add(vertices[triangles[i]] == north ? north : south);
-                    triangles[i] = vertices.Count - 1;
-                }
-                float xCoordB = GetUvCoordinates(vertices[triangles[i + 1]]).x;
-                float xCoordC = GetUvCoordinates(vertices[triangles[i + 2]]).x;
-                float correctedU = (xCoordB + xCoordC) / 2f + 0.5f; // I am not sure why it is needed but it seems needed...
-
-                poleVertIndicesCorrectU[triangles[i]] = correctedU;
-            }
-        }
-
-        return poleVertIndicesCorrectU;
-    }
-
-    private static Vector2 GetUvCoordinates(Vector3 vertice)
-    {
-        Vector3 vertCoord = vertice.normalized;
-        float u = (Mathf.Atan2(vertCoord.z, vertCoord.x) / (2f * Mathf.PI));
-        float v = (Mathf.Asin(vertCoord.y) / Mathf.PI) + 0.5f;
-
-        return new Vector2(u, v);
     }
 }
 

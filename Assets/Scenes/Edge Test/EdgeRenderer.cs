@@ -1,6 +1,8 @@
 using SpaceGame.Utils;
 using System.Collections.Generic;
 using UnityEngine;
+using SpaceGame.Celestial;
+using System.Linq;
 
 public class EdgeRenderer : MonoBehaviour
 {
@@ -9,6 +11,23 @@ public class EdgeRenderer : MonoBehaviour
 
     public Material mat;
     public int chunkSubdivisions;
+
+    [HideInInspector]
+    public bool noiseSettingsFoldout;
+
+    [Header("Planet Settings")]
+    public float radius;
+    public NoiseSettings noiseSettings;
+
+    [Header("Biome Settings")]
+    public float biomeFrequency;
+    public float biomeInvadeStrength;
+    public float biomeBlendStrength;
+    public NoiseSettings biomeSettings1;
+    public NoiseSettings biomeSettings2;
+    public NoiseSettings biomeSettings3;
+
+    public Noise noise = new Noise();
 
     private readonly Vector3[] vertices = new Icosahedron().GetVertices();
 
@@ -40,13 +59,49 @@ public class EdgeRenderer : MonoBehaviour
     private int chunkDataIndex;
     private int chunkNameIndex;
 
-    private void Start()
+    private void ResetEverything() 
     {
+        // Destroy old meshes
+        if (Application.isPlaying)
+        {
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        else 
+        {
+            var tempList = transform.Cast<Transform>().ToList();
+            foreach (Transform child in tempList)
+            {
+                DestroyImmediate(child.gameObject);
+            }
+        }
+        
+    }
+
+    public void UpdateUVs()
+    {
+        for (int i = 0; i < chunks.Length; i++) 
+        {
+            chunks[i].UpdateUVs();
+        }
+    }
+
+    public void GeneratePlanet()
+    {
+        ResetEverything();
+
+        chunksIndex = 0;
+        chunkDataIndex = 0;
+        chunkNameIndex = 0;
+
         var chunkCount = 20 * (int)Mathf.Pow(4, chunkSubdivisions);
 
         chunks = new EdgeChunk[chunkCount];
         chunkData = new ChunkData[chunkCount];
 
+        // Populate chunkData array
         InitializeChunks(new List<Vector3> { vertices[0], vertices[11], vertices[5] }, chunkSubdivisions);
         InitializeChunks(new List<Vector3> { vertices[0], vertices[5], vertices[1] }, chunkSubdivisions);
         InitializeChunks(new List<Vector3> { vertices[0], vertices[1], vertices[7] }, chunkSubdivisions);
@@ -68,13 +123,14 @@ public class EdgeRenderer : MonoBehaviour
         InitializeChunks(new List<Vector3> { vertices[8], vertices[6], vertices[7] }, chunkSubdivisions);
         InitializeChunks(new List<Vector3> { vertices[9], vertices[8], vertices[1] }, chunkSubdivisions);
 
-        var abc = true; // temp test value
+        // Populate chunks array
+        var abc = true;
         for (int i = 0; i < chunkData.Length; i++)
         {
             if (abc)
-                GenerateChunk(chunkData[i], 0);
+                GenerateChunk(chunkData[i], 5);
             else
-                GenerateChunk(chunkData[i], 0);
+                GenerateChunk(chunkData[i], 5);
 
             abc = !abc;
         }
@@ -84,32 +140,6 @@ public class EdgeRenderer : MonoBehaviour
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].GenerateMesh();
-        }
-
-        // For 3 subdivisions there are 64 vertices per base face
-
-        // EDGE NEIGHBORS
-        //var trianglesPerBaseFace = (int)Mathf.Pow(4, chunkSubdivisions);
-
-        // First Edge
-        var offset = 0;
-        var currentPower = chunkSubdivisions - 1;
-        for (int i = 0; i < Mathf.Pow(4, chunkSubdivisions); i += 4)
-        {
-            if (i == (int)Mathf.Pow(4, currentPower))
-            {
-                offset = (int)Mathf.Pow(4, currentPower);
-                currentPower++;
-            }
-
-            if (i < offset + 8 || (i >= offset + 16 && i < offset + 24)) // 3 chunkSubdivisions
-            {
-                chunkData[i].chunk.SetColor(Color.green);
-                chunkData[i + 1].chunk.SetColor(Color.green);
-
-                //chunkData[i + 256 + 64].chunk.SetColor(Color.red);
-                //chunkData[i + 256 + 64 + 1].chunk.SetColor(Color.red);
-            }
         }
     }
 
@@ -349,7 +379,7 @@ public class EdgeRenderer : MonoBehaviour
         chunkObj.name = $"{chunkNameIndex++}";
         var chunk = chunkObj.AddComponent<EdgeChunk>();
 
-        chunk.Create(_chunkData.vertices, mat, _chunkTriangles);
+        chunk.Create(_chunkData.vertices, this, _chunkTriangles);
         _chunkData.chunk = chunk;
 
         chunks[chunksIndex++] = chunk;

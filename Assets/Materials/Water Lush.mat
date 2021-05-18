@@ -120,12 +120,12 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _depth: 0.372
-    - _depthStrength: 0.9
-    - _displacement: 0.2
-    - _noiseScale: 20
-    - _normalStrength: 0.214
-    - _smoothness: 0.157
+    - _depth: 0.326
+    - _depthStrength: 0.866
+    - _displacement: 0.98
+    - _noiseScale: 23.04
+    - _normalStrength: 0.739
+    - _smoothness: 0.224
     - _waveSpeed: 0.01
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
