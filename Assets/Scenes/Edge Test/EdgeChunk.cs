@@ -10,6 +10,7 @@ public class EdgeChunk : MonoBehaviour
 {
     public Vector3[] vertices;
     private int[] triangles;
+    private Vector4[] uvs;
     public Edge[] edges;
     private Row[] rows;
 
@@ -43,11 +44,14 @@ public class EdgeChunk : MonoBehaviour
             triIndexCount = 3;
 
         triangles = new int[triIndexCount];
-        
+
 
         // TODO: Make "List<Vector3>" vertices become "Vector3[] vertices"
-        
+
         vertices = new Vector3[vertexCount];
+        uvs = new Vector4[vertexCount];
+
+        UpdateUVs();
 
         vertices[vertexIndex++] = _vertices[0];
         vertices[vertexIndex++] = _vertices[1];
@@ -68,12 +72,79 @@ public class EdgeChunk : MonoBehaviour
         // Triangles
         Triangulate();
 
-        var noise = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.noiseSettings);
+        var terrainSettings1 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.terrainSettings1);
+        var terrainSettings2 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.terrainSettings2);
+        var terrainSettings3 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.terrainSettings3);
 
-        for (int i = 0; i < vertices.Length; i++)
+        var blendRange = edgeRenderer.blendRange;
+        var blendRange2 = edgeRenderer.blendRange2;
+        //edgeRenderer.biomeBlendLine1.simpleNoiseSettings.minValue = -blendLine;
+
+        var biomeBlendLine1 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biomeBlendLine1);
+        var biome1 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biome1);
+
+        for (int i = 0; i < vertices.Length; i++) 
         {
+            /*var biomeBlendLine1Noise = biomeBlendLine1.Evaluate(vertices[i]);
+            var biomeNoise = biome1.Evaluate(vertices[i]);
+
+            var blueRedNoise = 0f;
+            var blueNoise = 0f;
+            var redNoise = 0f;
+            var greenNoise = 0f;
+            var redGreenNoise = 0f;
+
+            var biomeLine = blendRange + biomeBlendLine1Noise;
+
+            if (biomeNoise < -biomeLine + offset - 0.4f && biomeNoise >= -biomeLine + offset - 0.5f)
+            {
+                uvs[i] = Color.black;
+            }
+
+            if (biomeNoise < -biomeLine + offset - 0.3f && biomeNoise >= -biomeLine + offset - 0.4f)
+            {
+                uvs[i] = Color.cyan;
+            }
+
+            if (biomeNoise < -biomeLine + offset - 0.2f && biomeNoise >= -biomeLine + offset - 0.3f)
+            {
+                uvs[i] = Color.blue;
+            }
+
+            if (biomeNoise <= -biomeLine + blendRange2 + offset - 0.1f && biomeNoise >= -biomeLine - blendRange2 + offset + 0.2f) 
+            {
+                uvs[i] = Color.magenta;
+            }
+
+            if (biomeNoise < -biomeLine + offset && biomeNoise > -biomeLine + offset - 0.1f) 
+            {
+                redNoise = terrainSettings1.Evaluate(vertices[i]);
+                uvs[i] = Color.red;
+            }
+
+            if (biomeNoise >= -biomeLine + offset && biomeNoise < biomeLine + offset) 
+            {
+                //var t = Remap(biomeNoise, -biomeLine, biomeLine, 0, 1);
+                //redGreenNoise = Mathf.Lerp(terrainSettings1.Evaluate(vertices[i]), terrainSettings2.Evaluate(vertices[i]), t);
+                //uvs[i] = Color.Lerp(Color.red, Color.green, t);
+                uvs[i] = Color.yellow;
+            }
+
+            if (biomeNoise >= biomeLine + offset) 
+            {
+                greenNoise = terrainSettings2.Evaluate(vertices[i]);
+                uvs[i] = Color.green;
+            }
+
+            var totalNoise = redNoise + redGreenNoise + greenNoise + blueNoise + blueRedNoise;
+            vertices[i] = vertices[i].normalized * (edgeRenderer.radius + totalNoise);*/
+
+
             vertices[i] = vertices[i].normalized;
-            vertices[i] = vertices[i] * Mathf.Max(0.5f, noise.Evaluate(vertices[i])) * edgeRenderer.radius;
+            EvaluateBiome(i, vertices[i].y, 4);
+
+
+            
         }
 
         // Debug
@@ -85,13 +156,47 @@ public class EdgeChunk : MonoBehaviour
         //gameObject.isStatic = true;
     }
 
+    public void EvaluateBiome(int vertexIndex, float y, int numBiomes)
+    {
+        var biomeColors = new Color[] { Color.red, Color.green, Color.blue, Color.magenta, Color.black };
+
+        var height = Remap(y, -1, 1, 0, 0.99f);
+        var biomeIndex = Mathf.FloorToInt(height * (numBiomes));
+
+        uvs[vertexIndex] = biomeColors[biomeIndex]; // Biome Colors
+
+        var biome = height * numBiomes;
+
+        // Blending Zones
+        /*for (int i = 1; i < numBiomes; i++) 
+        {
+            if (biome > i - edgeRenderer.blendRange && biome < i + edgeRenderer.blendRange)
+            {
+                var t = Remap(y, -edgeRenderer.blendRange, edgeRenderer.blendRange, 0, 1);
+                uvs[vertexIndex] = Color.Lerp(biomeColors[i - 1], biomeColors[i], t);
+            }
+        }*/
+
+        for (int i = 1; i < numBiomes; i++) 
+        {
+            if (biome > i - edgeRenderer.blendRange && biome < i + edgeRenderer.blendRange)
+            {
+                var pivot = -1 + ((float)i / numBiomes) * 2;
+                var t = Remap(y, pivot - edgeRenderer.blendRange / numBiomes, pivot + edgeRenderer.blendRange / numBiomes, 0, 1);
+
+                uvs[vertexIndex] = Color.Lerp(biomeColors[i - 1], biomeColors[i], t);
+            }
+        }
+    }
+
     public void GenerateMesh()
     {
         mesh = new Mesh();
         mesh.name = "Chunk";
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
-        UpdateUVs();
+        //UpdateUVs();
+        mesh.SetUVs(0, uvs);
         mesh.normals = mesh.vertices.Select(s => s.normalized).ToArray();
         GetComponent<MeshFilter>().sharedMesh = mesh;
         GetComponent<MeshRenderer>().material = mat;
@@ -102,26 +207,7 @@ public class EdgeChunk : MonoBehaviour
 
     public void UpdateUVs() 
     {
-        Vector4[] uvs = new Vector4[vertices.Length];
-
-        var noise1 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biomeSettings1);
-        var noise2 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biomeSettings2);
-        var noise3 = NoiseFilterFactory.CreateNoiseFilter(edgeRenderer.biomeSettings3);
-
-        for (int i = 0; i < vertices.Length; i++) 
-        {
-            if (noise1.Evaluate(vertices[i]) > 0.5f) // Terrain
-                uvs[i] = new Vector4(1, 0, 0, 0);
-
-            if (noise2.Evaluate(vertices[i]) > 0.5f) // Swamp
-                if (uvs[i] != new Vector4(0, 0, 0, 0))
-                    uvs[i] = new Vector4(0, 1, 0, 0);
-
-            if (noise3.Evaluate(vertices[i]) > 0.5f) // Mountain
-                uvs[i] = new Vector4(0, 0, 1, 0);
-        }
-
-        mesh.SetUVs(0, uvs);
+        
     }
 
     private float Remap(float s, float a1, float a2, float b1, float b2)

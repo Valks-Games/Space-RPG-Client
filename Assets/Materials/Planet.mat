@@ -222,7 +222,7 @@ Material:
     - Smoothness: 0
     - Textures: 0
     - Texturize: 0
-    - Tile_Scale: 1
+    - Tile_Scale: 0.1
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1

@@ -17,15 +17,26 @@ public class EdgeRenderer : MonoBehaviour
 
     [Header("Planet Settings")]
     public float radius;
-    public NoiseSettings noiseSettings;
+    public NoiseSettings terrainSettings1;
+    public NoiseSettings terrainSettings2;
+    public NoiseSettings terrainSettings3;
 
     [Header("Biome Settings")]
     public float biomeFrequency;
     public float biomeInvadeStrength;
     public float biomeBlendStrength;
-    public NoiseSettings biomeSettings1;
-    public NoiseSettings biomeSettings2;
-    public NoiseSettings biomeSettings3;
+    public NoiseSettings biomeBlendLine1;
+    public NoiseSettings biome1;
+    [Range(0, 1)]
+    public float blendRange;
+    [Range(0, 1)]
+    public float blendRange2;
+    [Range(-1, 1)]
+    public float blendRange3;
+    [Range(0, 1)]
+    public float blendRange4;
+    [Range(0, 1)]
+    public float blendRange5;
 
     public Noise noise = new Noise();
 
