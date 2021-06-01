@@ -32,7 +32,9 @@ public class CheckBiome : MonoBehaviour
                 Debug.DrawLine(p1, p2, Color.green, 15f);
                 Debug.DrawLine(p2, p0, Color.green, 15f);
 
-                var color1 = mesh.colors[triangles[hit.triangleIndex * 3 + 0]];
+                Debug.Log($"{mesh.name} : {mesh.normals[triangles[hit.triangleIndex * 3 + 0]]}");
+
+                /*var color1 = mesh.colors[triangles[hit.triangleIndex * 3 + 0]];
                 var color2 = mesh.colors[triangles[hit.triangleIndex * 3 + 1]];
                 var color3 = mesh.colors[triangles[hit.triangleIndex * 3 + 2]];
 
@@ -44,7 +46,7 @@ public class CheckBiome : MonoBehaviour
                 else if (color1.g > 0)
                     biome = "Muddy Plains";
 
-                Debug.Log(biome);
+                Debug.Log(biome);*/
             }
         }
     }

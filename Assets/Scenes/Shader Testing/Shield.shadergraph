@@ -856,7 +856,7 @@
     "m_Group": {
         "m_Id": "1b55cefaf4bb4cd39547558b4f87861c"
     },
-    "m_Name": "Shield Noise All Dir",
+    "m_Name": "Noise All Dir",
     "m_DrawState": {
         "m_Expanded": true,
         "m_Position": {
@@ -2140,10 +2140,10 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "4fb8a93d6d6846b183d9bc7bdf70841d",
     "m_Id": 1209436689,
-    "m_DisplayName": "Shield Noise Speed",
+    "m_DisplayName": "Noise Speed",
     "m_SlotType": 0,
     "m_Hidden": false,
-    "m_ShaderOutputName": "Shield_Noise_Speed",
+    "m_ShaderOutputName": "Noise_Speed",
     "m_StageCapability": 3,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
@@ -2155,10 +2155,10 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "5062ed0b1dfe45008839a23b7dec2797",
     "m_Id": -1369294484,
-    "m_DisplayName": "Shield Noise Scale",
+    "m_DisplayName": "Noise Scale",
     "m_SlotType": 0,
     "m_Hidden": false,
-    "m_ShaderOutputName": "Shield_Noise_Scale",
+    "m_ShaderOutputName": "Noise_Scale",
     "m_StageCapability": 3,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,

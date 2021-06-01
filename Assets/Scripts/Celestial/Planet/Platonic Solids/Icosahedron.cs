@@ -1,16 +1,18 @@
 using UnityEngine;
 
-public class Icosahedron
+namespace SpaceGame.Celestial 
 {
-    private Vector3[] vertices;
-    private int[] triangles;
-
-    public Icosahedron(float radius = 1) 
+    public class Icosahedron
     {
-        var t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
+        private readonly Vector3[] vertices;
+        private readonly int[] triangles;
 
-        vertices = new Vector3[]
+        public Icosahedron(float radius = 1)
         {
+            var t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
+
+            vertices = new Vector3[]
+            {
             new Vector3(-1, t, 0).normalized  * radius,
             new Vector3(1, t, 0).normalized   * radius,
             new Vector3(-1, -t, 0).normalized * radius,
@@ -23,9 +25,9 @@ public class Icosahedron
             new Vector3(t, 0, 1).normalized   * radius,
             new Vector3(-t, 0, -1).normalized * radius,
             new Vector3(-t, 0, 1).normalized  * radius
-        };
+            };
 
-        triangles = new int[] {
+            triangles = new int[] {
             0, 11, 5,
             0, 5, 1,
             0, 1, 7,
@@ -47,11 +49,13 @@ public class Icosahedron
             8, 6, 7,
             9, 8, 1
         };
+        }
+
+        public Vector3[] GetVertices() => vertices;
+
+        public int[] GetTriangles() => triangles;
+
+        public int GetFaceCount() => triangles.Length / 3;
     }
-
-    public Vector3[] GetVertices() => vertices;
-
-    public int[] GetTriangles() => triangles;
-
-    public int GetFaceCount() => triangles.Length / 3;
 }
+

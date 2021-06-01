@@ -18,6 +18,7 @@ public class PlanetEditor : Editor
         using (var check = new EditorGUI.ChangeCheckScope())
         {
             base.OnInspectorGUI();
+
             if (check.changed)
             {
                 planet.GeneratePlanet();

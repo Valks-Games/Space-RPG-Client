@@ -10,8 +10,6 @@ public class EdgeRendererEditor : Editor
     private EdgeRenderer edgeRenderer;
 
     private Editor biomeEditor;
-    //private Editor terrainShapeEditor;
-    //private Editor colourEditor;
 
     public override void OnInspectorGUI()
     {
@@ -21,14 +19,11 @@ public class EdgeRendererEditor : Editor
             if (check.changed)
             {
                 edgeRenderer.GeneratePlanet();
-                //edgeRenderer.UpdateUVs();
             }
         }
         CreateButton("Generate Planet", edgeRenderer.GeneratePlanet);
-        CreateButton("Update UVs", edgeRenderer.UpdateUVs);
 
-        //DrawSettingsEditor(edgeRenderer.biomeSettings, () => edgeRenderer.OnBiomeSettingsUpdated(false), ref edgeRenderer.biomeSettingsFoldout, ref biomeEditor);
-        //CreateButton("Update Planet", () => planet.OnPlanetSettingsUpdated(true));
+        DrawSettingsEditor(edgeRenderer.planetSettings, () => edgeRenderer.GeneratePlanet(), ref edgeRenderer.planetSettingsFoldout, ref biomeEditor);
     }
 
     private void CreateButton(string name, System.Action onButtonPressed)
