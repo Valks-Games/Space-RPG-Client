@@ -9,7 +9,6 @@ namespace SpaceGame.Celestial
     {
         private readonly Material material;
         private readonly int[] triangles;
-        private readonly Color[] colors;
 
         public GameObject gameObject;
         public Mesh mesh;
@@ -19,6 +18,7 @@ namespace SpaceGame.Celestial
         public Edge[] edges;
         public Row[] rows;
         public Vector3[] vertices;
+        public Color[] colors;
         public int subdivisions;
 
         private int lastEdgeVertex;

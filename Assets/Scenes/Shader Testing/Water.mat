@@ -91,25 +91,29 @@ Material:
     m_Ints: []
     m_Floats:
     - Depth: 0.1
-    - Foam_Distance: 2.31
+    - Foam_Dissipation: 0.962
+    - Foam_Distance: 0
+    - Foam_Min_Amount: 0.598
+    - Foam_Noise_Scale: 25
     - Foam_Pulse: 1
-    - Foam_Strength: 0
-    - Noise_Amount: 0.01
-    - Noise_Scale: 1
-    - Noise_Speed: 0.05
+    - Foam_Speed: 1
+    - Foam_Strength: 2.72
+    - Noise_Amount: 0.1
+    - Noise_Scale: 0.5
+    - Noise_Speed: 0.2
     - Normal_1_Scale: 17.2
     - Normal_1_Strength: 0.1
     - Normal_2_Scale: 2.9
     - Normal_2_Strength: 0.01
-    - Normal_Scale: 97.1
-    - Normal_Speed: 0.003
+    - Normal_Scale: 10
+    - Normal_Speed: 0.033
     - Normal_Strength: 0.03
     - Scale: 1
     - Smoothness: 1
     - Speed: 0.1
     - TEst: 76.62
     - Test: 0.56
-    - Transparency: 0.883
+    - Transparency: 0.877
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1

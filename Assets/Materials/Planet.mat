@@ -176,6 +176,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 32f842a6f197dd848995ca4c39568870, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Triplanar_3d4c4d36f09b4a3aa21537e096ff7ef0_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 4cc3c4a60d4af534589afa736ca20940, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Triplanar_65e2289dff4f4798832b3ee7bb125370_Texture_1:
         m_Texture: {fileID: 2800000, guid: 63b7c1ebf02c36c4eb3f12e012d9aced, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -290,6 +294,7 @@ Material:
     - Scale: 2.36
     - Shoreline_Radius: 4.3
     - Smoothness: 0
+    - TEST: -2.8
     - Test: 4.28
     - Textures: 1
     - Texturize: 0

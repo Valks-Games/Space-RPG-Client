@@ -39,10 +39,10 @@ namespace SpaceGame.Celestial
 
         public IcosahedronSubdivided(int _chunkSubdivisions = 0)
         {
-            chunkData = new ChunkData[20 * (int)Mathf.Pow(4, _chunkSubdivisions)];
+            chunkData = new ChunkData[1 * (int)Mathf.Pow(4, _chunkSubdivisions)];
 
             InitializeChunks(new List<Vector3> { vertices[0], vertices[11], vertices[5] }, _chunkSubdivisions);
-            InitializeChunks(new List<Vector3> { vertices[0], vertices[5], vertices[1] }, _chunkSubdivisions);
+            /*InitializeChunks(new List<Vector3> { vertices[0], vertices[5], vertices[1] }, _chunkSubdivisions);
             InitializeChunks(new List<Vector3> { vertices[0], vertices[1], vertices[7] }, _chunkSubdivisions);
             InitializeChunks(new List<Vector3> { vertices[0], vertices[7], vertices[10] }, _chunkSubdivisions);
             InitializeChunks(new List<Vector3> { vertices[0], vertices[10], vertices[11] }, _chunkSubdivisions);
@@ -60,7 +60,7 @@ namespace SpaceGame.Celestial
             InitializeChunks(new List<Vector3> { vertices[2], vertices[4], vertices[11] }, _chunkSubdivisions);
             InitializeChunks(new List<Vector3> { vertices[6], vertices[2], vertices[10] }, _chunkSubdivisions);
             InitializeChunks(new List<Vector3> { vertices[8], vertices[6], vertices[7] }, _chunkSubdivisions);
-            InitializeChunks(new List<Vector3> { vertices[9], vertices[8], vertices[1] }, _chunkSubdivisions);
+            InitializeChunks(new List<Vector3> { vertices[9], vertices[8], vertices[1] }, _chunkSubdivisions);*/
         }
 
         private void InitializeChunks(List<Vector3> _vertices, int n)
@@ -100,8 +100,26 @@ namespace SpaceGame.Celestial
             chunkData[chunkDataIndex++] = new ChunkData() { vertices = _vertices, center = chunkCenter };
         }
 
+        // When mesh.RecalculateNormals() is used, ugly seams appear on each edge of a chunk
+        // This can be fixed by taking the average of the 2 vertices along the edges
+        public static void FixNormalEdges(EdgeChunkRaw[] chunks) 
+        {
+            /*for (int i = 0; i < chunks.Length; i++) 
+            {
+                var chunk = chunks[i];
+
+                for (int j = 0; j < chunk.redEdge.vertices.Length; j++) 
+                {
+                    var index = chunk.redEdge.vertices[j];
+
+                    var normal = chunk.mesh.normals[index];
+                }
+                
+            }*/
+        }
+
         #region Edges
-        public static void StitchEdges(EdgeChunk[] chunks)
+        public static void StitchEdges(EdgeChunkRaw[] chunks)
         {
             for (int i = 0; i < chunks.Length; i++)
             {
@@ -253,7 +271,7 @@ namespace SpaceGame.Celestial
             }
         }
 
-        private static void StitchChunkEdges(EdgeChunk[] chunks, EdgeColor edgeCurrent, EdgeColor edgeNeighbor, int curIndex, int neighhorIndex)
+        private static void StitchChunkEdges(EdgeChunkRaw[] chunks, EdgeColor edgeCurrent, EdgeColor edgeNeighbor, int curIndex, int neighhorIndex)
         {
             var curChunk = chunks[curIndex];
             var neighborChunk = chunks[neighhorIndex];
@@ -307,6 +325,6 @@ namespace SpaceGame.Celestial
     {
         public Vector3[] vertices;
         public Vector3 center;
-        public EdgeChunk chunk;
+        public EdgeChunkRaw chunk;
     }
 }

@@ -9,7 +9,8 @@ public class EdgeRendererEditor : Editor
 {
     private EdgeRenderer edgeRenderer;
 
-    private Editor biomeEditor;
+    private Editor terrainEditor;
+    private Editor oceanEditor;
 
     public override void OnInspectorGUI()
     {
@@ -18,12 +19,13 @@ public class EdgeRendererEditor : Editor
             base.OnInspectorGUI();
             if (check.changed)
             {
-                edgeRenderer.GeneratePlanet();
+                edgeRenderer.GenerateTerrain();
             }
         }
-        CreateButton("Generate Planet", edgeRenderer.GeneratePlanet);
+        CreateButton("Generate Terrain", edgeRenderer.GenerateTerrain);
 
-        DrawSettingsEditor(edgeRenderer.planetSettings, () => edgeRenderer.GeneratePlanet(), ref edgeRenderer.planetSettingsFoldout, ref biomeEditor);
+        DrawSettingsEditor(edgeRenderer.terrainSettings, () => edgeRenderer.GenerateTerrain(), ref edgeRenderer.terrainSettingsFoldout, ref terrainEditor);
+        DrawSettingsEditor(edgeRenderer.oceanSettings, () => edgeRenderer.GenerateOcean(), ref edgeRenderer.oceanSettingsFoldout, ref oceanEditor);
     }
 
     private void CreateButton(string name, System.Action onButtonPressed)
