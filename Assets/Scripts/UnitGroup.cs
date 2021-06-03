@@ -30,7 +30,7 @@ namespace SpaceGame
         {
             this.units = units;
             this.planet = planet;
-            planetRadius = planet.GetComponent<Planet>().shapeSettings.radius;
+            //planetRadius = planet.GetComponent<Planet>().shapeSettings.radius;
 
             // Initialize group origin, all units will align with respect to this origin
             groupOrigin = new GameObject().transform;

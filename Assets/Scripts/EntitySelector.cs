@@ -7,7 +7,7 @@ namespace SpaceGame
 {
     public class EntitySelector : MonoBehaviour
     {
-        private Dictionary<int, GameObject> selectedEntities = new Dictionary<int, GameObject>();
+        /*private Dictionary<int, GameObject> selectedEntities = new Dictionary<int, GameObject>();
 
         private bool dragSelect;
         private Vector3 p1; // First mouse position on screen
@@ -184,11 +184,11 @@ namespace SpaceGame
                 var rightPlane = new Plane(cornersWorldSpace[3], cornersWorldSpace[1], camPos);
                 var bottomPlane = new Plane(cornersWorldSpace[2], cornersWorldSpace[3], camPos);
 
-                /*if (debugEnabled) Debug.Log(
-                    $"Top: {topPlane.GetSide(unitPos)}, " +
-                    $"Left: {leftPlane.GetSide(unitPos)}, " +
-                    $"Right: {rightPlane.GetSide(unitPos)}, " +
-                    $"Bottom: {bottomPlane.GetSide(unitPos)}");*/
+                //if (debugEnabled) Debug.Log(
+                //    $"Top: {topPlane.GetSide(unitPos)}, " +
+                //    $"Left: {leftPlane.GetSide(unitPos)}, " +
+                //    $"Right: {rightPlane.GetSide(unitPos)}, " +
+                //    $"Bottom: {bottomPlane.GetSide(unitPos)}");
 
                 if (topPlane.GetSide(unitPos) && leftPlane.GetSide(unitPos) && rightPlane.GetSide(unitPos) && bottomPlane.GetSide(unitPos))
                 {
@@ -319,10 +319,7 @@ namespace SpaceGame
             DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
         }
 
-        /*
-         * I do not fully understand this function copied from Unity RTS Selection Tutorial https://www.youtube.com/watch?v=OL1QgwaDsqo
-         */
-
+        //I do not fully understand this function copied from Unity RTS Selection Tutorial https://www.youtube.com/watch?v=OL1QgwaDsqo
         private Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2)
         {
             // Move origin from bottom left to top left
@@ -335,10 +332,8 @@ namespace SpaceGame
             return Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
         }
 
-        /*
-         * Create a bounding box (4 cornersScreenSpace in order) from the start and end mouse position
-         * I do not fully understand this function copied from Unity RTS Selection Tutorial https://www.youtube.com/watch?v=OL1QgwaDsqo
-         */
+        //Create a bounding box (4 cornersScreenSpace in order) from the start and end mouse position
+        //I do not fully understand this function copied from Unity RTS Selection Tutorial https://www.youtube.com/watch?v=OL1QgwaDsqo
 
         private Vector2[] GetBoundingBox(Vector2 p1, Vector2 p2)
         {
@@ -403,6 +398,6 @@ namespace SpaceGame
             }
         }
 
-        #endregion Draw Screen Rect
+        #endregion Draw Screen Rect*/
     }
 }

@@ -160,6 +160,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Triplanar_098abe1dcd1d4c118deae2541ef9ec16_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 198fc7b4f589e5e4f9429a1ba1e6a5b4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Triplanar_247bf5e83892437aad24e8b8a386d7cc_Texture_1:
         m_Texture: {fileID: 2800000, guid: 644519b260b251543b598a336e338320, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -178,6 +182,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Triplanar_3d4c4d36f09b4a3aa21537e096ff7ef0_Texture_1:
         m_Texture: {fileID: 2800000, guid: 4cc3c4a60d4af534589afa736ca20940, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Triplanar_44294c5017e74ffb9df74d019b7561e4_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 198fc7b4f589e5e4f9429a1ba1e6a5b4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Triplanar_65e2289dff4f4798832b3ee7bb125370_Texture_1:
@@ -289,12 +297,16 @@ Material:
     - Amplitude: 4.33
     - Height: 1.08
     - Normals: 1
+    - Planet_Radius: -0.46
     - Power: 72.8
     - Red_Tile_Scale: 1
     - Scale: 2.36
     - Shoreline_Radius: 4.3
     - Smoothness: 0
-    - TEST: -2.8
+    - Snow_Amount: 0.6
+    - Snow_Opacity: 1
+    - Snow_Remove_Amount: 6.22
+    - TEST: -0.85
     - Test: 4.28
     - Textures: 1
     - Texturize: 0
@@ -310,7 +322,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
-    - _Float: 3.23
+    - _Float: -4.93
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -332,6 +344,7 @@ Material:
     - Min_Max: {r: 50, g: 72.64, b: 0, a: 0}
     - Test_1: {r: 2.8, g: -0.15, b: 0.77, a: 0}
     - UV: {r: 4.07, g: 1.47, b: 1.32, a: 2.42}
+    - Vector3: {r: 0, g: 2.08, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Blend: {r: 0, g: 1, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

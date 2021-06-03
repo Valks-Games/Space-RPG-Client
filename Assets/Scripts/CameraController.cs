@@ -5,7 +5,7 @@ namespace SpaceGame
 {
     public class CameraController : MonoBehaviour
     {
-        [Header("Planet")]
+        /*[Header("Planet")]
         public Transform planet;
 
         [Header("Speed")]
@@ -71,6 +71,6 @@ namespace SpaceGame
             planet = _planetGo.transform;
             planetScript = planet.GetComponent<Planet>();
             cam.transform.Translate(new Vector3(0, 0, -planetScript.shapeSettings.radius - distanceFromPlanetSurface));
-        }
+        }*/
     }
 }

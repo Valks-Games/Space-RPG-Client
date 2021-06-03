@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEditor;
 using SpaceGame.Celestial;
 
-[CustomEditor(typeof(EdgeRenderer))]
+[CustomEditor(typeof(PlanetRenderer))]
 public class EdgeRendererEditor : Editor
 {
-    private EdgeRenderer edgeRenderer;
+    private PlanetRenderer planetRenderer;
 
     private Editor terrainEditor;
     private Editor oceanEditor;
@@ -19,13 +19,13 @@ public class EdgeRendererEditor : Editor
             base.OnInspectorGUI();
             if (check.changed)
             {
-                edgeRenderer.GenerateTerrain();
+                planetRenderer.GenerateTerrain();
             }
         }
-        CreateButton("Generate Terrain", edgeRenderer.GenerateTerrain);
+        CreateButton("Generate Terrain", planetRenderer.GenerateTerrain);
 
-        DrawSettingsEditor(edgeRenderer.terrainSettings, () => edgeRenderer.GenerateTerrain(), ref edgeRenderer.terrainSettingsFoldout, ref terrainEditor);
-        DrawSettingsEditor(edgeRenderer.oceanSettings, () => edgeRenderer.GenerateOcean(), ref edgeRenderer.oceanSettingsFoldout, ref oceanEditor);
+        DrawSettingsEditor(planetRenderer.terrainSettings, () => planetRenderer.GenerateTerrain(), ref planetRenderer.terrainSettingsFoldout, ref terrainEditor);
+        DrawSettingsEditor(planetRenderer.oceanSettings, () => planetRenderer.GenerateOcean(), ref planetRenderer.oceanSettingsFoldout, ref oceanEditor);
     }
 
     private void CreateButton(string name, System.Action onButtonPressed)
@@ -43,27 +43,20 @@ public class EdgeRendererEditor : Editor
         if (settings != null)
         {
             foldout = EditorGUILayout.InspectorTitlebar(foldout, settings);
-            using (var check = new EditorGUI.ChangeCheckScope())
+            using var check = new EditorGUI.ChangeCheckScope();
+            if (foldout)
             {
-                if (foldout)
-                {
-                    CreateCachedEditor(settings, null, ref editor);
-                    editor.OnInspectorGUI();
+                CreateCachedEditor(settings, null, ref editor);
+                editor.OnInspectorGUI();
 
-                    if (check.changed)
-                    {
-                        if (onSettingsUpdated != null)
-                        {
-                            onSettingsUpdated();
-                        }
-                    }
-                }
+                if (check.changed)
+                    onSettingsUpdated?.Invoke();
             }
         }
     }
 
     private void OnEnable()
     {
-        edgeRenderer = (EdgeRenderer)target;
+        planetRenderer = (PlanetRenderer)target;
     }
 }

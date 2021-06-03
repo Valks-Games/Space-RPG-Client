@@ -27,13 +27,13 @@ public class UnityEvents : UnityEditor.AssetModificationProcessor
 public class UnityEventsHandler
 {
 	public static void HandlePlanetSaving(){
-		var planets = Object.FindObjectsOfType<Planet>();
+		var planets = Object.FindObjectsOfType<PlanetRenderer>();
 
 		foreach (var planet in planets)
 		{
 			var curLocalPos = planet.transform.localPosition;
 			planet.Destroy(); // Destroy all planets before save
-			UnityEditor.EditorApplication.delayCall += planet.GeneratePlanet; // Regenerate all planets after save
+			UnityEditor.EditorApplication.delayCall += planet.GenerateTerrain; // Regenerate all planets after save
 			UnityEditor.EditorApplication.delayCall += () => { planet.transform.localPosition = curLocalPos; };
 		}
 	}

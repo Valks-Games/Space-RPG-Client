@@ -33,8 +33,8 @@ namespace SpaceGame.Utils
             var gravityUp = GravityUp(transform, planet);
 
             // Snap back to planets surface
-            var planetRadius = planet.GetComponent<Planet>().shapeSettings.radius;
-            transform.position = gravityUp * (planetRadius + 1);
+            //var planetRadius = planet.GetComponent<Planet>().shapeSettings.radius;
+            //transform.position = gravityUp * (planetRadius + 1);
         }
 
         public static Vector3 SphericalToCartesian(Vector3 sphericalCoord)

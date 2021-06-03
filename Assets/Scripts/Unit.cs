@@ -14,7 +14,7 @@ namespace SpaceGame
     public class Unit : MonoBehaviour
     {
         public Transform planet;
-        private Planet planetScript;
+        //private Planet planetScript;
 
         private float planetRadius;
 
@@ -41,8 +41,8 @@ namespace SpaceGame
 
         private void Start()
         {
-            planetScript = planet.GetComponent<Planet>();
-            planetRadius = planetScript.shapeSettings.radius;
+            //planetScript = planet.GetComponent<Planet>();
+            //planetRadius = planetScript.shapeSettings.radius;
 
             transform.position = new Vector3(0, planetRadius + 1, 0);
 
