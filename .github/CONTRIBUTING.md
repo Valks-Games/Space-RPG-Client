@@ -4,19 +4,15 @@ Current project Unity version `2020.2.1f1`, remind me to update this if I ever c
 ## Coding Style
 ### Methods
 - Methods should follow PascalFormat
-- Try to keep accessor (getter) and mutator (setter) methods at bottom of classes. (This is more of like a guide, you do not have to follow this rule by the book)
-- Add `private` to MonoBehavior methods
-- If using `{}` always expand them
+- Always fully expand `{}`
 ### Properties
-- Use a `_` in front of all properties in methods and constructors.
+- Use a `_` in front of all parameters in methods and constructors.
 ### Comments
-Start comments with `/*!` so Doxygen can recognize them.
+Use XML for Doxygen
 ```cs
-/*!
- * This is a function.
- * 
- * @return Returns this.
- */
+/// <summary>
+/// Hello world
+/// </summary>
 ```
 
 ## Creating a Pull Request
