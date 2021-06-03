@@ -24,6 +24,9 @@ namespace SpaceGame.Celestial
 
         private int chunkNameIndex;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void GenerateTerrain()
         {
             Destroy();
