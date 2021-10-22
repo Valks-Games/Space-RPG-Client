@@ -1,3 +1,6 @@
+## Pictures of Progress
+https://imgur.com/gallery/SN7TFb0
+
 ## Roadmap
 [Roadmap](https://trello.com/b/AMahPSG3/valks-game)
 
