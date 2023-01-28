@@ -4,6 +4,8 @@
 ## [Video Dev Blog #1](https://www.youtube.com/watch?v=f6MDs8ob3II) *all issues presented in this video were resolved*  
 
 ## Previews
+Developed in Unity `2020.2.1f1`
+
 All previews here are in order from newest to oldest. Not all videos / images are here sadly, I regret deleting some of them. One thing that's not here is an image of a chunk of higher subdivision count having its edge stitched together with a chunk with a lower subdivision count. The stitching was further developed to work with any number of subdivisions.
 
 https://user-images.githubusercontent.com/6277739/215292715-2acbc464-0125-4699-b4dd-517fb4deaed5.mp4  
