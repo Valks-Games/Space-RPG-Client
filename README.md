@@ -1,9 +1,10 @@
 # You Were Never Alone
-## Blogs
-### [Video Dev Blog #1](https://www.youtube.com/watch?v=f6MDs8ob3II) *all issues presented in this video were resolved*  
+## [Game Dev Document](https://docs.google.com/document/d/1wYrVitMzH2iCK0fiJtVGfjbJv3W5hcDI94I7GbzcSoQ/edit?usp=sharing)
+
+## [Video Dev Blog #1](https://www.youtube.com/watch?v=f6MDs8ob3II) *all issues presented in this video were resolved*  
 
 ## Previews
-In order from newest to oldest. Not all videos / images are here sadly, I regret deleting some of them. One thing that's not here is an image of a chunk of higher subdivision count having its edge stitched together with a chunk with a lower subdivision count. The stitching was further developed to work with any number of combinations.
+All previews here are in order from newest to oldest. Not all videos / images are here sadly, I regret deleting some of them. One thing that's not here is an image of a chunk of higher subdivision count having its edge stitched together with a chunk with a lower subdivision count. The stitching was further developed to work with any number of subdivisions.
 
 https://user-images.githubusercontent.com/6277739/215292715-2acbc464-0125-4699-b4dd-517fb4deaed5.mp4  
 
@@ -135,6 +136,6 @@ https://user-images.githubusercontent.com/6277739/215293394-d30c1865-698b-4071-8
 [Roadmap](https://trello.com/b/AMahPSG3/valks-game)
 
 ## Contributing
-Please refer to [CONTRIBUTING.md](https://github.com/Valks-Games/valks-game/blob/main/.github/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/Valks-Games/valks-game/blob/main/.github/CONTRIBUTING.md) (extremely outdated, please talk to me)
 
 Talk to `va#9904` in Discord
