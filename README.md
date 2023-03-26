@@ -1,4 +1,4 @@
-# You Were Never Alone (scroll down for previews)
+# You Were Never Alone (scroll down for previews) (if videos dont load, reload page)
 ## [Game Dev Document](https://docs.google.com/document/d/1wYrVitMzH2iCK0fiJtVGfjbJv3W5hcDI94I7GbzcSoQ/edit?usp=sharing)
 
 ## [Video Dev Blog #1](https://www.youtube.com/watch?v=f6MDs8ob3II) *all issues presented in this video were resolved*  
